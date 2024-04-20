@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
-import React from 'react';
-import styles from '../../../pages/Book/Book.module.css';
-import { displayStars } from '../../../lib/functions';
+import * as PropTypes from "prop-types";
+import React from "react";
+import { displayStars } from "../../../lib/functions";
+import styles from "../../../pages/Book/Book.module.css";
 
 function BookInfo({ book }) {
   return (
@@ -12,12 +12,16 @@ function BookInfo({ book }) {
       <p className={styles.Genre}>{book.genre}</p>
       <div className={styles.Rating}>
         <div>{displayStars(book.averageRating)}</div>
-        <p>{`${book.averageRating}/5`}</p>
+        <p>
+          {book.averageRating}/5
+          {/* {Number.isInteger(book.averageRating)
+            ? `${book.averageRating}/5`
+            : `${book.averageRating.toFixed(1)}/5`} */}
+        </p>
       </div>
     </div>
   );
 }
-
 BookInfo.propTypes = {
   book: PropTypes.shape({
     id: PropTypes.string,
@@ -27,10 +31,12 @@ BookInfo.propTypes = {
     year: PropTypes.number,
     imageUrl: PropTypes.string,
     genre: PropTypes.string,
-    ratings: PropTypes.arrayOf(PropTypes.shape({
-      userId: PropTypes.string,
-      grade: PropTypes.number,
-    })),
+    ratings: PropTypes.arrayOf(
+      PropTypes.shape({
+        userId: PropTypes.string,
+        grade: PropTypes.number,
+      })
+    ),
     averageRating: PropTypes.number,
   }).isRequired,
 };
