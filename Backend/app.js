@@ -1,30 +1,24 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv").config();
-const mongoose = require("mongoose");
-
-const userRoutes = require("./routes/users.routes");
-const auth = require("./middlewares/auth.middlewares");
-
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("🚀 Successfully connected to MongoDB Atlas!");
-  })
-  .catch((error) => {
-    console.log("Unable to connect to MongoDB Atlas : ", error);
-  });
-
+const connectDB = require("./config/db");
 const app = express();
-app.use(express.json()); // Pour analyser les corps de requête au format JSON
-app.use(express.urlencoded({ extended: true })); // Pour analyser les corps de requête au format urlencoded
+const dotenv = require("dotenv");
+const path = require("path");
+dotenv.config();
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
+
+// CONNEXION A LA BASE DE DONNEES
+connectDB();
+
 app.use(cors());
+app.use(express.json()); // Pour analyser les corps de requête au format JSON
 
-// ROUTES DE CONNEXION ET D'INSCRIPTION
-app.use("/api/auth", userRoutes);
-app.use("/api/auth", userRoutes);
+// ROUTES
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/api/auth", require("./routes/users.routes"));
+app.use("/api/books", require("./routes/books.routes"));
 
-// ROUTES BOOKS
-// app.use("api/books", auth, bookRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = app;

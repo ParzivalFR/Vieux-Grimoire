@@ -1,0 +1,324 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Gestion de bibliothèque API",
+    "version": "1.0.0",
+    "description": "API pour la gestion des livres et des utilisateurs"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "summary": "Créer un nouvel utilisateur",
+        "operationId": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès"
+          },
+          "400": {
+            "description": "Erreur lors de la création de l'utilisateur"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Connecter un utilisateur",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants invalides"
+          }
+        }
+      }
+    },
+    "/api/books": {
+      "get": {
+        "summary": "Obtenir tous les livres",
+        "operationId": "getAllBooks",
+        "responses": {
+          "200": {
+            "description": "Liste des livres récupérée avec succès"
+          },
+          "404": {
+            "description": "Aucun livre trouvé"
+          }
+        }
+      },
+      "post": {
+        "summary": "Créer un nouveau livre",
+        "operationId": "createBook",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "type": "number"
+                  },
+                  "genre": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Livre créé avec succès"
+          },
+          "400": {
+            "description": "Erreur lors de la création du livre"
+          }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "summary": "Obtenir un livre par ID",
+        "operationId": "getOneBook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livre récupéré avec succès"
+          },
+          "404": {
+            "description": "Livre non trouvé"
+          }
+        }
+      },
+      "put": {
+        "summary": "Modifier un livre par ID",
+        "operationId": "modifyBook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livre modifié avec succès"
+          },
+          "400": {
+            "description": "Erreur lors de la modification du livre"
+          },
+          "403": {
+            "description": "Requête non autorisée"
+          },
+          "404": {
+            "description": "Livre non trouvé"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un livre par ID",
+        "operationId": "deleteBook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livre supprimé avec succès"
+          },
+          "400": {
+            "description": "Erreur lors de la suppression du livre"
+          },
+          "403": {
+            "description": "Requête non autorisée"
+          },
+          "404": {
+            "description": "Livre non trouvé"
+          }
+        }
+      }
+    },
+    "/api/books/bestrating": {
+      "get": {
+        "summary": "Obtenir les meilleurs livres notés",
+        "operationId": "getBestRating",
+        "responses": {
+          "200": {
+            "description": "Liste des meilleurs livres récupérée avec succès"
+          },
+          "404": {
+            "description": "Aucun livre trouvé"
+          }
+        }
+      }
+    },
+    "/api/books/{id}/rating": {
+      "post": {
+        "summary": "Créer une notation pour un livre",
+        "operationId": "createRating",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rating": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Notation créée avec succès"
+          },
+          "400": {
+            "description": "La notation doit être comprise entre 1 et 5"
+          },
+          "403": {
+            "description": "Requête non autorisée"
+          },
+          "404": {
+            "description": "Livre non trouvé"
+          }
+        }
+      }
+    }
+  }
+}
