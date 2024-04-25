@@ -125,7 +125,6 @@
         "operationId": "createBook",
         "security": [
           {
-            "BearerAuth": []
           }
         ],
         "requestBody": {
@@ -203,7 +202,6 @@
         ],
         "security": [
           {
-            "BearerAuth": []
           }
         ],
         "responses": {

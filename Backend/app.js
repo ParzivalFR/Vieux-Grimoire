@@ -3,8 +3,8 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const app = express();
 const dotenv = require("dotenv");
-const path = require("path");
 dotenv.config();
+const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
