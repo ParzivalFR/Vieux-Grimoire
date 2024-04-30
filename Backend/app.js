@@ -7,7 +7,6 @@ dotenv.config();
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
-const helmet = require("helmet");
 const xss = require("xss-clean");
 const rateLimit = require("express-rate-limit");
 
@@ -21,7 +20,6 @@ const limiter = rateLimit({
 
 app.use(cors());
 app.use(limiter);
-app.use(helmet());
 app.use(xss());
 app.use(express.json()); // Pour analyser les corps de requête au format JSON
 
