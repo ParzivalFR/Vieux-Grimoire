@@ -9,6 +9,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 const xss = require("xss-clean");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 
 // CONNEXION A LA BASE DE DONNEES
 connectDB();
@@ -17,6 +18,14 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
 });
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      imgSrc: ["'self'"],
+    },
+  })
+);
 
 app.use(cors());
 app.use(limiter);
