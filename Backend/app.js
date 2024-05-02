@@ -16,27 +16,25 @@ connectDB();
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 100, // Limite chaque IP à 100 requêtes par windowMs
 });
 
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      imgSrc: ["'self'"],
-    },
+  helmet({
+    crossOriginResourcePolicy: false,
   })
-);
-
-app.use(cors());
-app.use(limiter);
-app.use(xss());
+); // Pour sécuriser les en-têtes HTTP
+app.use(cors()); // Pour éviter les erreurs de CORS
+app.use(limiter); // Pour éviter les attaques de force brute
+app.use(xss()); // Pour éviter les attaques XSS
 app.use(express.json()); // Pour analyser les corps de requête au format JSON
+app.use(express.urlencoded({ extended: true })); // Pour analyser les corps de requête des formulaires HTML
 
 // ROUTES
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/auth", require("./routes/users.routes"));
 app.use("/api/books", require("./routes/books.routes"));
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument)); // Pour afficher la documentation Swagger
 
 module.exports = app;
